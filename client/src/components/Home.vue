@@ -6,14 +6,15 @@
       <button @click="createArticle">생성하기</button>
     </div>
     <h2>작성된 게시글</h2>
-    <ul>
-      <li v-for='a in articles' :key='a.id'>{{a.content}}</li>
-    </ul>
+    
+    <Card v-for='a in articles' :key='a.id' :article="a" @update='updateCard' @delete='deleteCard' />
+    
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import Card from '@/components/Card'
 
 export default {
   data(){
@@ -26,6 +27,18 @@ export default {
     this.findOneArticle()
   },
   methods:{    
+    updateCard({id,content}){
+      const idx = this.articles.findIndex(v => v._id === id)
+      if(idx > -1){
+        this.articles[idx].content = content
+      }
+    },
+    deleteCard(id){
+      const idx = this.articles.findIndex(v => v._id === id)
+      if(idx > -1){
+        this.articles.splice(idx,1)
+      }
+    },
     async findOneArticle(){
            
       const {data} = await axios.get(`http://localhost:3000/read`)
@@ -48,6 +61,9 @@ export default {
       this.articles.push(data)
       this.content = ''
     }
+  },
+  components:{
+    Card,
   }
 }
 </script>

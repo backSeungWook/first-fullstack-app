@@ -1,20 +1,21 @@
 <template>
   <div>
-    <div class="card">
-      <div class="content">{{article.content}}</div>
-      <div class="created-at">{{article.createdAt}}</div>
-    </div>
+    <card :article='article' @update='updateCard' @delete='moveToHome' />
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import Card from './Card.vue'
 
 export default {
+  components: { 
+    Card
+   },
   data(){
     return{
       article:{
-        id:null,
+        _id:null,
         content:null,
         createdAt:null
       }
@@ -26,13 +27,21 @@ export default {
   methods:{    
     async findOneArticle(){
       const articleId = this.$route.params.id
-      console.log('123 : ',articleId)
+     
       const {data} = await axios.get(`http://localhost:3000/read/${articleId}`)
       this.article = {
         ...data
       }
       console.log('data ',data)
-    }
+    },
+    updateCard({content}){     
+      this.article.content = content
+    },
+    moveToHome(){
+      this.$router.push({
+        name:'Home'
+      })
+    },
   }
 }
 </script>
